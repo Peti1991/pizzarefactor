@@ -75,6 +75,12 @@ const removeItemFromOrder = (id:number) => {
   }
 }
 
+const getInputValue = (inputElement: HTMLInputElement | null) => {
+  if (inputElement)
+    return inputElement.value
+  return ""
+}
+
 
 // render
 const renderList = (pizzas: Pizza[]) => {
@@ -105,16 +111,20 @@ const renderSelected = (pizza: Pizza) => {
 }
 
 const renderOrder = (order: Order) => {
+
+  let nameValue = getInputValue(document.getElementById("name") as HTMLInputElement)
+  let zipValue = getInputValue(document.getElementById("zip") as HTMLInputElement)
+  
   const content = `
     <div>
       <h1>Your order</h1>
       ${order.items.map(item => `
         <p class="bg-red-500">${item.amount} x ${pizzas.find(pizza => pizza.id === item.id)!.name}</p>
-        <button id=remove_${item.id}>Remove item</button>
+        <button id="remove_${item.id}">Remove item</button>
       `)}
-      <input placeholder="Name">
-      <input placeholder="Zip code">
-      <button>Send order</button>
+      <input id="name" value="${nameValue}" placeholder="Name">
+      <input id="zip" value="${zipValue}" placeholder="Zip code">
+      <button id="send">Send order</button>
     </div>
   `
 
@@ -123,6 +133,8 @@ const renderOrder = (order: Order) => {
   for (const orderID of order.items) {
     (document.getElementById(`remove_${orderID.id}`) as HTMLButtonElement).addEventListener("click", removeListener)
   }
+
+  (document.getElementById("send") as HTMLButtonElement).addEventListener("click", sendOrder)
 }
 
 // eventListeners
@@ -156,6 +168,22 @@ const removeListener = (event: Event) => {
   }
   if (order)
     renderOrder(order)
+
+  console.log(order)
+}
+
+const sendOrder = async () => {
+  if  (order) {
+    order.name = (document.getElementById("name") as HTMLInputElement).value
+    order.zipCode = (document.getElementById("zip") as HTMLInputElement).value
+  }
+
+  const response = await axios.post("http://localhost:3333/api/order", JSON.stringify(order), {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+
 }
 
 init()

@@ -1,0 +1,14 @@
+{
+  "name": "Péter Fodor",
+  "zipCode": "2360",
+  "items": [
+    {
+      "id": 4,
+      "amount": 2
+    },
+    {
+      "id": 3,
+      "amount": 2
+    }
+  ]
+}
