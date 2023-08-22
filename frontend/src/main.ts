@@ -67,6 +67,14 @@ const updateOrderWithItem = () => {
   }
 }
 
+const removeItemFromOrder = (id:number) => {
+  order = {
+    name: order!.name,
+    zipCode: order!.zipCode,
+    items: order!.items.filter((item) => item.id !== id)
+  }
+}
+
 
 // render
 const renderList = (pizzas: Pizza[]) => {
@@ -102,6 +110,7 @@ const renderOrder = (order: Order) => {
       <h1>Your order</h1>
       ${order.items.map(item => `
         <p class="bg-red-500">${item.amount} x ${pizzas.find(pizza => pizza.id === item.id)!.name}</p>
+        <button id=remove_${item.id}>Remove item</button>
       `)}
       <input placeholder="Name">
       <input placeholder="Zip code">
@@ -110,10 +119,14 @@ const renderOrder = (order: Order) => {
   `
 
   document.getElementById("order")!.innerHTML = content
+
+  for (const orderID of order.items) {
+    (document.getElementById(`remove_${orderID.id}`) as HTMLButtonElement).addEventListener("click", removeListener)
+  }
 }
 
 // eventListeners
-const init = async () => {
+const init = async () => {
   await getPizzas()
   if (pizzas.length)
     renderList(pizzas)
@@ -135,5 +148,14 @@ const addListener = () => {
     renderOrder(order)
 }
 
+const removeListener = (event: Event) => {
+  removeItemFromOrder(+(event.target as HTMLButtonElement).id.split("_")[1])
+  if(!order!.items.length) {
+    order = null
+    document.getElementById("order")!.innerHTML = ""
+  }
+  if (order)
+    renderOrder(order)
+}
 
 init()

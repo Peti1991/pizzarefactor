@@ -44,12 +44,12 @@ body {
   background-image: url(https://pixy.org/download/800846/);
   
   background-position: center left;
-  background-color: whitesmoke;
+  background-color: white;
   display: flex;
   flex-direction: column; 
 }
 * {
-  color:rgb(255, 250, 231);
+  color:black
 }
 header {
   background-color: rgba(246, 227, 175, 0.8);
