@@ -75,10 +75,11 @@ const removeItemFromOrder = (id:number) => {
   }
 }
 
-const getInputValue = (inputElement: HTMLInputElement | null) => {
-  if (inputElement)
-    return inputElement.value
-  return ""
+const addOrderDetails = () => {
+  if  (order) {
+    order.name = document.getElementById("name") as HTMLInputElement ? (document.getElementById("name") as HTMLInputElement).value : ""
+    order.zipCode = document.getElementById("zip") as HTMLInputElement ? (document.getElementById("zip") as HTMLInputElement).value : ""
+  }
 }
 
 
@@ -112,8 +113,7 @@ const renderSelected = (pizza: Pizza) => {
 
 const renderOrder = (order: Order) => {
 
-  let nameValue = getInputValue(document.getElementById("name") as HTMLInputElement)
-  let zipValue = getInputValue(document.getElementById("zip") as HTMLInputElement)
+  addOrderDetails()
   
   const content = `
     <div>
@@ -122,8 +122,8 @@ const renderOrder = (order: Order) => {
         <p class="bg-red-500">${item.amount} x ${pizzas.find(pizza => pizza.id === item.id)!.name}</p>
         <button id="remove_${item.id}">Remove item</button>
       `)}
-      <input id="name" value="${nameValue}" placeholder="Name">
-      <input id="zip" value="${zipValue}" placeholder="Zip code">
+      <input id="name" value="${order.name}" placeholder="Name">
+      <input id="zip" value="${order.zipCode}" placeholder="Zip code">
       <button id="send">Send order</button>
     </div>
   `
@@ -173,10 +173,8 @@ const removeListener = (event: Event) => {
 }
 
 const sendOrder = async () => {
-  if  (order) {
-    order.name = (document.getElementById("name") as HTMLInputElement).value
-    order.zipCode = (document.getElementById("zip") as HTMLInputElement).value
-  }
+
+  addOrderDetails()
 
   const response = await axios.post("http://localhost:3333/api/order", JSON.stringify(order), {
     headers: {
