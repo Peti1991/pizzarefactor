@@ -75,9 +75,14 @@ const removeItemFromOrder = (id:number) => {
   }
 }
 
-const addOrderDetails = () => {
+const addNameDetails = () => {
   if  (order) {
     order.name = document.getElementById("name") as HTMLInputElement ? (document.getElementById("name") as HTMLInputElement).value : ""
+  }
+}
+
+const addZipDetails = () => {
+  if  (order) {
     order.zipCode = document.getElementById("zip") as HTMLInputElement ? (document.getElementById("zip") as HTMLInputElement).value : ""
   }
 }
@@ -112,8 +117,6 @@ const renderSelected = (pizza: Pizza) => {
 }
 
 const renderOrder = (order: Order) => {
-
-  addOrderDetails()
   
   const content = `
     <div>
@@ -134,7 +137,9 @@ const renderOrder = (order: Order) => {
     (document.getElementById(`remove_${orderID.id}`) as HTMLButtonElement).addEventListener("click", removeListener)
   }
 
-  (document.getElementById("send") as HTMLButtonElement).addEventListener("click", sendOrder)
+  (document.getElementById("send") as HTMLButtonElement).addEventListener("click", sendOrder);
+  (document.getElementById("name") as HTMLButtonElement).addEventListener("change", addNameDetails);
+  (document.getElementById("zip") as HTMLButtonElement).addEventListener("change", addZipDetails)
 }
 
 // eventListeners
@@ -162,19 +167,12 @@ const addListener = () => {
 
 const removeListener = (event: Event) => {
   removeItemFromOrder(+(event.target as HTMLButtonElement).id.split("_")[1])
-  if(!order!.items.length) {
-    order = null
-    document.getElementById("order")!.innerHTML = ""
-  }
+
   if (order)
     renderOrder(order)
-
-  console.log(order)
 }
 
 const sendOrder = async () => {
-
-  addOrderDetails()
 
   const response = await axios.post("http://localhost:3333/api/order", JSON.stringify(order), {
     headers: {
